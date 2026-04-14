@@ -1,9 +1,5 @@
 import Link from "next/link";
 
-const typeEmoji: Record<string, string> = {
-  personality: "✨", personalityalt: "✨", trivia: "🧠", poll: "📊", list: "📝", question: "❓", vs: "⚡",
-};
-
 interface Props {
   quizType: string;
   quizAuthor: string;
@@ -14,19 +10,17 @@ export function QuizSidebar({ quizType, quizAuthor, related }: Props) {
   return (
     <aside className="hidden lg:block space-y-6">
       {/* Creator card */}
-      <div className="rounded-2xl border p-5" style={{ borderColor: "var(--gray-100)" }}>
-        <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "var(--gray-400)", fontFamily: "var(--font-display)" }}>
-          Created by
-        </p>
+      <div className="game-card p-5">
+        <p className="mono text-[10px] font-bold tracking-widest mb-3" style={{ color: "var(--gray-400)" }}>CREATED BY</p>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-            style={{ background: "var(--gradient-brand)", color: "white", fontFamily: "var(--font-display)" }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-extrabold display"
+            style={{ background: "var(--grad-brand)", color: "white" }}>
             {quizAuthor.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-semibold text-sm" style={{ fontFamily: "var(--font-display)", color: "var(--gray-800)" }}>
+            <Link href={`/profile/${quizAuthor}`} className="display font-bold text-sm hover:text-[var(--cyan)] transition-colors" style={{ color: "var(--gray-800)" }}>
               {quizAuthor}
-            </p>
+            </Link>
             <p className="text-xs" style={{ color: "var(--gray-400)" }}>Quiz Creator</p>
           </div>
         </div>
@@ -34,51 +28,45 @@ export function QuizSidebar({ quizType, quizAuthor, related }: Props) {
 
       {/* Related quizzes */}
       {related.length > 0 && (
-        <div className="rounded-2xl border p-5" style={{ borderColor: "var(--gray-100)" }}>
-          <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "var(--gray-400)", fontFamily: "var(--font-display)" }}>
-            Related Quizzes
-          </p>
+        <div className="game-card p-5">
+          <p className="mono text-[10px] font-bold tracking-widest mb-4" style={{ color: "var(--gray-400)" }}>UP NEXT</p>
           <div className="space-y-2">
-            {related.slice(0, 6).map((rq, i) => (
-              <Link key={rq.id} href={`/${rq.url || rq.id}`}
-                className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-all hover:bg-[var(--gray-50)]">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
-                  style={{
-                    background: i < 3 ? "var(--gradient-brand)" : "var(--gray-100)",
-                    color: i < 3 ? "white" : "var(--gray-400)",
-                    fontFamily: "var(--font-display)",
-                  }}>
-                  {i + 1}
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium leading-snug line-clamp-2" style={{ color: "var(--gray-700)", fontFamily: "var(--font-display)" }}>
-                    {rq.title}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: "var(--gray-400)" }}>
-                    {typeEmoji[rq.type] || "📋"} {Number(rq.taken) > 0 ? `${Number(rq.taken).toLocaleString()} taken` : rq.type}
-                  </p>
-                </div>
-              </Link>
-            ))}
+            {related.slice(0, 6).map((rq, i) => {
+              const rankClass = i === 0 ? "rank-gold" : i === 1 ? "rank-silver" : i === 2 ? "rank-bronze" : "rank-default";
+              return (
+                <Link key={rq.id} href={`/${rq.url || rq.id}`}
+                  className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-all hover:bg-[var(--gray-50)]">
+                  <span className={`${rankClass} display w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0`}>
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="display text-xs font-semibold leading-snug line-clamp-2" style={{ color: "var(--gray-700)" }}>
+                      {rq.title}
+                    </p>
+                    {Number(rq.taken) > 0 && (
+                      <p className="mono text-[9px] mt-0.5" style={{ color: "var(--gray-400)" }}>{Number(rq.taken).toLocaleString()} played</p>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-          <Link href="/browse" className="block mt-3 text-center text-xs font-bold rounded-xl py-2 transition-all hover:bg-[var(--gray-50)]"
-            style={{ color: "var(--neon-cyan)", fontFamily: "var(--font-display)" }}>
-            Browse All Quizzes →
+          <Link href="/browse" className="block mt-3 text-center display text-xs font-bold rounded-xl py-2 transition-all hover:bg-[var(--gray-50)]"
+            style={{ color: "var(--cyan)" }}>
+            Browse all quizzes
           </Link>
         </div>
       )}
 
-      {/* CTA */}
-      <div className="rounded-2xl p-5 text-center" style={{ background: "var(--gradient-brand-subtle)", border: "1px solid var(--gray-100)" }}>
-        <p className="text-2xl mb-2">🎯</p>
-        <p className="text-sm font-bold mb-1" style={{ fontFamily: "var(--font-display)", color: "var(--gray-800)" }}>
-          Want more?
+      {/* Points CTA */}
+      <div className="game-card p-5 text-center" style={{ background: "var(--gray-50)" }}>
+        <p className="text-2xl mb-2">🎮</p>
+        <p className="display text-sm font-bold" style={{ color: "var(--gray-800)" }}>Earn points</p>
+        <p className="text-xs mt-1 mb-4" style={{ color: "var(--gray-400)" }}>
+          +10 pts per quiz, +5 per comment
         </p>
-        <p className="text-xs mb-4" style={{ color: "var(--gray-500)" }}>
-          Explore thousands of quizzes
-        </p>
-        <Link href="/browse" className="cta-btn w-full justify-center" style={{ padding: "10px 20px", fontSize: "13px" }}>
-          Explore Quizzes
+        <Link href="/auth/signup" className="cta-btn w-full justify-center" style={{ padding: "8px 16px", fontSize: "12px" }}>
+          <span>Join free</span>
         </Link>
       </div>
     </aside>
