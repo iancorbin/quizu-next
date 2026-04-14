@@ -6,6 +6,22 @@ import { PollPlayer } from "@/components/poll-player";
 import { ListViewer } from "@/components/list-viewer";
 import { WYRPlayer } from "@/components/wyr-player";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  let quiz = await prisma.quizMeta.findFirst({ where: { url: slug, published: "2" } });
+  if (!quiz) {
+    const id = parseInt(slug);
+    if (!isNaN(id)) quiz = await prisma.quizMeta.findFirst({ where: { id, published: "2" } });
+  }
+  if (!quiz) return { title: "Quiz Not Found — Quizu" };
+  const typeLabel = quiz.type === "personality" || quiz.type === "personalityalt" ? "Personality Quiz" : quiz.type === "trivia" ? "Trivia" : quiz.type === "poll" ? "Poll" : "Quiz";
+  return {
+    title: `${quiz.title} — ${typeLabel} | Quizu`,
+    description: quiz.description || `Take the "${quiz.title}" ${typeLabel.toLowerCase()} on Quizu. ${Number(quiz.taken) > 0 ? `${Number(quiz.taken).toLocaleString()} people have taken this quiz.` : ""}`,
+  };
+}
 
 const typeLabels: Record<string, string> = {
   personality: "Personality", personalityalt: "Personality", trivia: "Trivia",
