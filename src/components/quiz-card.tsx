@@ -47,7 +47,7 @@ export function QuizCard({ quiz, rank }: QuizCardProps) {
   const viewsNum = Number(quiz.views) || 0;
 
   return (
-    <Link href={`/quiz/${slug}`} className="quiz-card group relative flex flex-col overflow-hidden rounded-2xl border bg-white" style={{ borderColor: "var(--gray-100)" }}>
+    <Link href={`/${slug}`} className="quiz-card group relative flex flex-col overflow-hidden rounded-2xl border bg-white" style={{ borderColor: "var(--gray-100)" }}>
       {/* Rank badge */}
       {rank && (
         <div className="absolute top-3 left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg"

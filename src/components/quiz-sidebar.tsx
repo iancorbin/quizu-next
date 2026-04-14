@@ -40,7 +40,7 @@ export function QuizSidebar({ quizType, quizAuthor, related }: Props) {
           </p>
           <div className="space-y-2">
             {related.slice(0, 6).map((rq, i) => (
-              <Link key={rq.id} href={`/quiz/${rq.url || rq.id}`}
+              <Link key={rq.id} href={`/${rq.url || rq.id}`}
                 className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-all hover:bg-[var(--gray-50)]">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
                   style={{

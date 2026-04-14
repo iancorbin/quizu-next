@@ -59,7 +59,7 @@ export function RichTable({ title, subtitle, accent = "cyan", viewAllHref, quizz
           const isTop = i < 3;
 
           return (
-            <Link key={quiz.id} href={`/quiz/${slug}`}
+            <Link key={quiz.id} href={`/${slug}`}
               className="rich-row"
               style={{ gridTemplateColumns: "2.5rem 1fr auto" }}>
               {/* Rank */}

@@ -6,6 +6,7 @@ import { PollPlayer } from "@/components/poll-player";
 import { ListViewer } from "@/components/list-viewer";
 import { WYRPlayer } from "@/components/wyr-player";
 import { QuizSidebar } from "@/components/quiz-sidebar";
+import { CommentSection } from "@/components/comment-section";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -134,6 +135,9 @@ export default async function QuizPage({ params }: { params: Promise<{ slug: str
 
             {/* Quiz content */}
             {content}
+
+            {/* Comments */}
+            <CommentSection quizId={quiz.id} initialCount={0} />
           </div>
 
           {/* Sidebar */}

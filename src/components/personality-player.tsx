@@ -57,6 +57,12 @@ export function PersonalityPlayer({ quizId, quizTitle, questions, results, relat
     const matched = results.find(r => r.id === Number(winnerId)) || results[0];
     setResult(matched || null);
     setShowingResult(true);
+    // Earn points for completing
+    fetch("/api/points/earn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "quiz_complete", quizId }),
+    }).catch(() => {});
     setTimeout(() => {
       resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -206,7 +212,7 @@ export function PersonalityPlayer({ quizId, quizTitle, questions, results, relat
               </h3>
               <div className="grid gap-2 sm:grid-cols-2">
                 {relatedQuizzes.slice(0, 4).map(rq => (
-                  <Link key={rq.id} href={`/quiz/${rq.url || rq.id}`}
+                  <Link key={rq.id} href={`/${rq.url || rq.id}`}
                     className="flex items-center gap-3 rounded-xl px-4 py-3 transition-all hover:bg-white/5"
                     style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
                     <span className="text-xl">

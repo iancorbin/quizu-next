@@ -83,7 +83,7 @@ export default async function HomePage() {
 
             {/* Right — featured quiz CTA */}
             {hero && (
-              <Link href={`/quiz/${hero.url || hero.id}`} className="featured-card block animate-in delay-2"
+              <Link href={`/${hero.url || hero.id}`} className="featured-card block animate-in delay-2"
                 style={{ background: "linear-gradient(135deg, rgba(0,229,255,0.1), rgba(255,45,135,0.1))", border: "1px solid rgba(255,255,255,0.1)", padding: "32px" }}>
                 <span className={`badge badge-${hero.type}`}>{hero.type === "personalityalt" ? "Personality" : hero.type}</span>
                 <h2 className="mt-4 text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--white)" }}>
@@ -106,7 +106,7 @@ export default async function HomePage() {
         <section className="mt-10 -mx-4 sm:mx-0">
           <div className="flex gap-4 overflow-x-auto px-4 sm:px-0 pb-4 no-scrollbar">
             {stories.map((q, i) => (
-              <Link key={q.id} href={`/quiz/${q.url || q.id}`} className={`story-bubble animate-in delay-${i + 1}`}>
+              <Link key={q.id} href={`/${q.url || q.id}`} className={`story-bubble animate-in delay-${i + 1}`}>
                 <div className="story-ring">
                   <div className="story-ring-inner">
                     {q.type === "personality" || q.type === "personalityalt" ? "✨" : q.type === "trivia" ? "🧠" : q.type === "poll" ? "📊" : q.type === "list" ? "📝" : "⚡"}

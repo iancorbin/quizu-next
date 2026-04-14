@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 
 const NAV_LINKS = [
@@ -15,6 +15,16 @@ const NAV_LINKS = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
+  const [points, setPoints] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch("/api/points/earn")
+        .then((r) => r.json())
+        .then((d) => setPoints(d.points))
+        .catch(() => {});
+    }
+  }, [session]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg" style={{ borderBottom: "1px solid var(--gray-100)" }}>
@@ -36,6 +46,13 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {session ? (
             <>
+              {/* Points badge */}
+              {points !== null && (
+                <span className="hidden sm:inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold"
+                  style={{ background: "var(--gradient-brand-subtle)", color: "var(--neon-cyan)", fontFamily: "var(--font-display)" }}>
+                  💎 {points.toLocaleString()}
+                </span>
+              )}
               <span className="hidden sm:inline text-xs font-medium" style={{ color: "var(--gray-500)" }}>
                 {session.user.name || session.user.email}
               </span>

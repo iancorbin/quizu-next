@@ -48,6 +48,7 @@ model QuizMeta {
   metaLoves            MetaLove[]
   metaReact            MetaReact[]
   metaTags             MetaTag[]
+  comments             Comment[]
 
   @@map("quiz_meta")
 }
@@ -230,6 +231,9 @@ model User {
   status      String @default("")
   messaging   String @default("")
   ip          String @default("")
+  points      Int    @default(0)
+
+  comments    Comment[]
 
   @@map("users")
 }
@@ -340,4 +344,23 @@ model UserTaken {
   quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   @@map("user_taken")
+}
+
+// ─── Comments ───────────────────────────────────────────────────────
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  quizId     Int      @map("quiz_id")
+  userId     Int?     @map("user_id")
+  authorName String   @default("") @map("author_name")
+  message    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  parentId   Int?     @map("parent_id")
+
+  quiz     QuizMeta  @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
+
+  @@map("comments")
 }
