@@ -64,7 +64,7 @@ export default async function QuizPage({ params }: { params: Promise<{ slug: str
     content = <PersonalityPlayer quizId={quiz.id} quizTitle={quiz.title} questions={questions} results={results} relatedQuizzes={related} />;
   } else if (quizType === "trivia") {
     const questions = await prisma.quizTriviaQuestion.findMany({ where: { quizId: quiz.id }, include: { answers: true }, orderBy: { id: "asc" } });
-    content = <TriviaPlayer quizId={quiz.id} questions={questions} />;
+    content = <TriviaPlayer quizId={quiz.id} quizTitle={quiz.title} questions={questions} relatedQuizzes={related} />;
   } else if (quizType === "poll") {
     const answers = await prisma.pollAnswer.findMany({ where: { quizId: quiz.id }, include: { _count: { select: { responses: true } } }, orderBy: { id: "asc" } });
     content = <PollPlayer quizId={quiz.id} answers={answers} />;

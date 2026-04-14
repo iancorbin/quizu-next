@@ -104,48 +104,44 @@ export function CommentSection({ quizId, initialCount }: Props) {
         </span>
       </div>
 
-      {/* Add comment form */}
-      <div className="rounded-2xl border p-4 mb-6" style={{ borderColor: "var(--gray-100)" }}>
-        {!session && (
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name (optional)"
-            className="w-full rounded-xl border-2 px-4 py-2.5 text-sm mb-3 outline-none transition-all focus:border-[var(--neon-cyan)]"
+      {/* Add comment form — auth required */}
+      {session ? (
+        <div className="rounded-2xl border p-4 mb-6" style={{ borderColor: "var(--gray-100)" }}>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Share your thoughts..."
+            rows={3}
+            className="w-full rounded-xl border-2 px-4 py-3 text-sm outline-none transition-all focus:border-[var(--neon-cyan)] resize-none"
             style={{ borderColor: "var(--gray-200)" }}
           />
-        )}
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder={session ? "Share your thoughts..." : "Add a comment..."}
-          rows={3}
-          className="w-full rounded-xl border-2 px-4 py-3 text-sm outline-none transition-all focus:border-[var(--neon-cyan)] resize-none"
-          style={{ borderColor: "var(--gray-200)" }}
-        />
-        <div className="flex items-center justify-between mt-3">
-          {!session && (
+          <div className="flex items-center justify-between mt-3">
             <p className="text-xs" style={{ color: "var(--gray-400)" }}>
-              <Link href="/auth/signin" className="font-semibold hover:text-[var(--neon-cyan)]" style={{ color: "var(--gray-600)" }}>
-                Sign in
-              </Link>{" "}to earn 5 points per comment
+              Posting as <strong style={{ color: "var(--gray-700)" }}>{session.user.name}</strong> · +5 💎
             </p>
-          )}
-          {session && (
-            <p className="text-xs" style={{ color: "var(--gray-400)" }}>
-              Posting as <strong style={{ color: "var(--gray-700)" }}>{session.user.name}</strong> · +5 points
-            </p>
-          )}
-          <button
-            onClick={() => submitComment()}
-            disabled={!message.trim() || submitting}
-            className="cta-btn disabled:opacity-40"
-            style={{ padding: "8px 20px", fontSize: "13px" }}
-          >
-            {submitting ? "Posting..." : "Post"}
-          </button>
+            <button
+              onClick={() => submitComment()}
+              disabled={!message.trim() || submitting}
+              className="cta-btn disabled:opacity-40"
+              style={{ padding: "8px 20px", fontSize: "13px" }}
+            >
+              {submitting ? "Posting..." : "Post"}
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="rounded-2xl p-6 mb-6 text-center" style={{ background: "var(--gradient-brand-subtle)", border: "1px solid var(--gray-100)" }}>
+          <p className="text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display)", color: "var(--gray-800)" }}>
+            Join the conversation
+          </p>
+          <p className="text-xs mb-4" style={{ color: "var(--gray-500)" }}>
+            Sign in to comment and earn 💎 points
+          </p>
+          <Link href="/auth/signin" className="cta-btn inline-flex" style={{ padding: "8px 24px", fontSize: "13px" }}>
+            Sign in to comment
+          </Link>
+        </div>
+      )}
 
       {/* Comments list */}
       {loading ? (
