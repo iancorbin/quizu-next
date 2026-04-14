@@ -66,13 +66,13 @@ export default async function HomePage() {
         {/* Ranked tables */}
         <section className="mt-14 grid gap-6 lg:grid-cols-2">
           <RichTable title="Most Popular" subtitle="Top quizzes by plays" accent="pink" viewAllHref="/browse" quizzes={latest.slice(0, 8)} />
-          <RichTable title="Brain Busters" subtitle="Trivia that stumps" accent="cyan" viewAllHref="/browse?type=trivia" quizzes={trivia} />
+          <RichTable title="Brain Busters" subtitle="Trivia that stumps" accent="cyan" viewAllHref="/trivia" quizzes={trivia} />
         </section>
 
         {/* Personality */}
         {personality.length > 0 && (
           <section className="mt-14">
-            <SectionHeader title="Personality Quizzes" subtitle="Discover who you really are" href="/browse?type=personality" />
+            <SectionHeader title="Personality Quizzes" subtitle="Discover who you really are" href="/personality" />
             <QuizGrid quizzes={personality} columns={3} />
           </section>
         )}
@@ -80,7 +80,7 @@ export default async function HomePage() {
         {/* Trivia */}
         {trivia.length > 0 && (
           <section className="mt-14">
-            <SectionHeader title="Trivia Challenges" subtitle="Test your knowledge" href="/browse?type=trivia" />
+            <SectionHeader title="Trivia Challenges" subtitle="Test your knowledge" href="/trivia" />
             <QuizGrid quizzes={trivia} columns={3} />
           </section>
         )}
@@ -88,7 +88,7 @@ export default async function HomePage() {
         {/* Polls */}
         {polls.length > 0 && (
           <section className="mt-14">
-            <SectionHeader title="Polls" subtitle="Cast your vote" href="/browse?type=poll" />
+            <SectionHeader title="Polls" subtitle="Cast your vote" href="/polls" />
             <QuizGrid quizzes={polls} columns={3} />
           </section>
         )}

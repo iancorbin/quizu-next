@@ -16,17 +16,17 @@ export function CategoryBar({ categories }: Props) {
             style={{ background: "var(--gray-900)", color: "white", fontFamily: "var(--font-display)" }}>
             All
           </Link>
-          <Link href="/browse?type=personality"
+          <Link href="/personality"
             className="shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all hover:border-[var(--neon-pink)] hover:text-[var(--neon-pink)]"
             style={{ borderColor: "var(--gray-200)", color: "var(--gray-600)", fontFamily: "var(--font-display)" }}>
             Personality
           </Link>
-          <Link href="/browse?type=trivia"
+          <Link href="/trivia"
             className="shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)]"
             style={{ borderColor: "var(--gray-200)", color: "var(--gray-600)", fontFamily: "var(--font-display)" }}>
             Trivia
           </Link>
-          <Link href="/browse?type=poll"
+          <Link href="/polls"
             className="shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all hover:border-emerald-500 hover:text-emerald-600"
             style={{ borderColor: "var(--gray-200)", color: "var(--gray-600)", fontFamily: "var(--font-display)" }}>
             Polls

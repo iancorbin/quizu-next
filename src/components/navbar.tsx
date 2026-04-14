@@ -7,8 +7,8 @@ import { useSession, signOut } from "next-auth/react";
 
 const NAV_LINKS = [
   { href: "/browse", label: "Explore" },
-  { href: "/browse?type=personality", label: "Personality" },
-  { href: "/browse?type=trivia", label: "Trivia" },
+  { href: "/personality", label: "Personality" },
+  { href: "/trivia", label: "Trivia" },
   { href: "/badges", label: "Badges" },
 ];
 
