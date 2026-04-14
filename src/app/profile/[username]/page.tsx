@@ -18,7 +18,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const user = await prisma.user.findFirst({ where: { username } });
   if (!user) notFound();
 
-  const [createdQuizzes, takenCount, comments] = await Promise.all([
+  const [createdQuizzes, takenCount, comments, userBadges] = await Promise.all([
     prisma.quizMeta.findMany({
       where: { username: user.username, published: "2", NOT: { title: "" } },
       orderBy: { id: "desc" },
@@ -26,6 +26,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
     }),
     prisma.userTaken.count({ where: { username: user.username } }),
     prisma.comment.count({ where: { userId: user.id } }),
+    prisma.userBadge.findMany({
+      where: { userId: user.id },
+      include: { badge: true },
+      orderBy: { earnedAt: "desc" },
+    }),
   ]);
 
   const joinDate = user.timestamp
@@ -67,6 +72,29 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
       </div>
 
       <div className="neon-line-thin w-full mb-10" />
+
+      {/* Badges */}
+      {userBadges.length > 0 && (
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--gray-900)" }}>
+              🏆 Badges ({userBadges.length})
+            </h2>
+            <Link href="/badges" className="text-xs font-bold hover:text-[var(--neon-cyan)]" style={{ color: "var(--gray-400)", fontFamily: "var(--font-display)" }}>
+              View all badges →
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {userBadges.map(ub => (
+              <div key={ub.id} className="rounded-xl border px-3 py-2 flex items-center gap-2" title={ub.badge.description}
+                style={{ borderColor: "var(--gray-200)", background: "var(--gray-50)" }}>
+                <span className="text-xl">{ub.badge.emoji}</span>
+                <span className="text-xs font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--gray-700)" }}>{ub.badge.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Created quizzes */}
       {createdQuizzes.length > 0 ? (

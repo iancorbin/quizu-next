@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { QuizGrid } from "@/components/quiz-grid";
 import { CategoryBar } from "@/components/category-bar";
 import { FeaturedHero } from "@/components/featured-hero";
+import { RichTable } from "@/components/rich-table";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -73,6 +74,24 @@ export default async function HomePage() {
             </Link>
           </div>
           <QuizGrid quizzes={latest} />
+        </section>
+
+        {/* ═══ TOP RANKED ═══════════════════════════════ */}
+        <section className="mt-14 grid gap-6 lg:grid-cols-2">
+          <RichTable
+            title="🔥 Most Popular"
+            subtitle="Top quizzes by plays"
+            accent="pink"
+            viewAllHref="/browse"
+            quizzes={latest.slice(0, 8)}
+          />
+          <RichTable
+            title="🧠 Brain Busters"
+            subtitle="Trivia that stumps"
+            accent="cyan"
+            viewAllHref="/browse?type=trivia"
+            quizzes={trivia}
+          />
         </section>
 
         {/* ═══ PERSONALITY QUIZZES ══════════════════════ */}

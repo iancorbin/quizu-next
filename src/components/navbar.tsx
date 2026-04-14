@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/browse?type=trivia", label: "Trivia", emoji: "🧠" },
   { href: "/browse?type=poll", label: "Polls", emoji: "📊" },
   { href: "/browse", label: "All Quizzes" },
+  { href: "/badges", label: "Badges", emoji: "🏆" },
 ];
 
 export function Navbar() {

@@ -232,8 +232,10 @@ model User {
   messaging   String @default("")
   ip          String @default("")
   points      Int    @default(0)
+  role        String @default("user") // user, admin
 
   comments    Comment[]
+  earnedBadges UserBadge[]
 
   @@map("users")
 }
@@ -363,4 +365,35 @@ model Comment {
   replies  Comment[] @relation("CommentReplies")
 
   @@map("comments")
+}
+
+// ─── Badges ─────────────────────────────────────────────────────────
+
+model Badge {
+  id          Int    @id @default(autoincrement())
+  slug        String @unique
+  name        String
+  description String
+  emoji       String // The badge icon
+  rarity      String // common, uncommon, rare, epic, legendary
+  category    String // activity, social, achievement, secret
+  requirement String // human-readable requirement
+  threshold   Int    @default(1) // numeric threshold to earn (e.g., 10 quizzes)
+
+  earnedBy UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id       Int      @id @default(autoincrement())
+  userId   Int      @map("user_id")
+  badgeId  Int      @map("badge_id")
+  earnedAt DateTime @default(now()) @map("earned_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
 }
