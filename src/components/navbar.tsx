@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 const NAV_LINKS = [
   { href: "/browse?type=personality", label: "Personality", emoji: "✨" },
@@ -13,6 +14,7 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg" style={{ borderBottom: "1px solid var(--gray-100)" }}>
@@ -32,9 +34,28 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/browse" className="cta-btn" style={{ padding: "8px 20px", fontSize: "13px" }}>
-            Explore
-          </Link>
+          {session ? (
+            <>
+              <span className="hidden sm:inline text-xs font-medium" style={{ color: "var(--gray-500)" }}>
+                {session.user.name || session.user.email}
+              </span>
+              <button onClick={() => signOut()} className="rounded-full border px-3 py-1.5 text-xs font-semibold transition-all hover:border-[var(--neon-pink)] hover:text-[var(--neon-pink)]"
+                style={{ borderColor: "var(--gray-200)", color: "var(--gray-500)", fontFamily: "var(--font-display)" }}>
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/signin" className="hidden sm:inline text-sm font-medium transition-colors hover:text-[var(--neon-cyan)]"
+                style={{ color: "var(--gray-500)", fontFamily: "var(--font-display)" }}>
+                Sign in
+              </Link>
+              <Link href="/auth/signup" className="cta-btn" style={{ padding: "8px 20px", fontSize: "13px" }}>
+                Sign up
+              </Link>
+            </>
+          )}
+
           <button onClick={() => setOpen(!open)} className="md:hidden p-2" style={{ color: "var(--gray-500)" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               {open ? <><path d="M18 6 6 18"/><path d="m6 6 12 12"/></> : <><path d="M4 8h16"/><path d="M4 16h16"/></>}
@@ -52,6 +73,13 @@ export function Navbar() {
               {link.emoji && <span className="mr-2">{link.emoji}</span>}{link.label}
             </Link>
           ))}
+          {!session && (
+            <Link href="/auth/signin" onClick={() => setOpen(false)}
+              className="block px-3 py-2.5 rounded-xl text-sm font-medium"
+              style={{ color: "var(--gray-700)", fontFamily: "var(--font-display)" }}>
+              Sign in
+            </Link>
+          )}
         </div>
       )}
     </nav>
