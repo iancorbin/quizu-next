@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/components/auth-provider";
 import { Navbar } from "@/components/navbar";
 
 const geistSans = Geist({
@@ -15,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quizu — Create & Take Quizzes",
+  title: "Quizu — Personality Quizzes, Trivia, Polls & More",
   description:
-    "Create personality quizzes, share them with friends, and discover your results.",
+    "Take thousands of personality quizzes, trivia tests, polls, and more. Discover yourself with Quizu.",
 };
 
 export default function RootLayout({
@@ -31,10 +30,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-gray-50">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-        </AuthProvider>
+        <Navbar />
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );

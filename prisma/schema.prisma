@@ -7,98 +7,337 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id             String   @id @default(cuid())
-  username       String   @unique
-  email          String   @unique
-  password       String?
-  name           String?
-  bio            String?
-  profilePicture String?
-  provider       String?
-  providerId     String?
-  type           String   @default("user")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+// ─── Core Quiz Tables ───────────────────────────────────────────────
 
-  quizzes      Quiz[]
-  quizAttempts QuizAttempt[]
+model QuizMeta {
+  id             Int      @id @default(autoincrement())
+  title          String   @default("")
+  description    String   @default("")
+  photo          String   @default("")
+  photoBig       String   @default("") @map("photo_big")
+  type           String   @default("") // personality, personalityalt, trivia, poll, list, question, vs
+  username       String   @default("")
+  tags           String   @default("")
+  tagsEditorial  String   @default("") @map("tags_editorial")
+  tagsUser       String   @default("") @map("tags_user")
+  url            String   @default("")
+  category       String   @default("")
+  rating         String   @default("")
+  theme          String   @default("")
+  loves          String   @default("")
+  views          String   @default("")
+  taken          String   @default("")
+  timestamp      String   @default("")
+  published      String   @default("")
+  ip             String   @default("")
+
+  personalityQuestions QuizPersonalityQuestion[]
+  personalityAnswers   QuizPersonalityAnswer[]
+  personalityResults   QuizPersonalityResult[]
+  triviaQuestions      QuizTriviaQuestion[]
+  triviaAnswers        QuizTriviaAnswer[]
+  pollAnswers          PollAnswer[]
+  pollResponses        PollResponse[]
+  listAnswers          ListAnswer[]
+  wyrAnswers           WouldYouRatherAnswer[]
+  wyrResponses         WouldYouRatherResponse[]
+  resultsLog           QuizResultsLog[]
+  userTaken            UserTaken[]
+  metaComments         MetaComment[]
+  metaCategories       MetaCategory[]
+  metaLoves            MetaLove[]
+  metaReact            MetaReact[]
+  metaTags             MetaTag[]
+
+  @@map("quiz_meta")
 }
+
+// ─── Personality Quiz ───────────────────────────────────────────────
+
+model QuizPersonalityQuestion {
+  id       Int    @id @default(autoincrement())
+  quizId   Int    @map("quiz_id")
+  resultId Int?   @map("result_id")
+  question String @default("")
+  photo    String @default("")
+  video    String @default("") @db.Text
+  username String @default("")
+
+  quiz    QuizMeta                @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizPersonalityAnswer[]
+
+  @@map("quiz_personality_questions")
+}
+
+model QuizPersonalityAnswer {
+  id         Int    @id @default(autoincrement())
+  quizId     Int    @map("quiz_id")
+  resultId   Int    @map("result_id")
+  questionId Int    @map("question_id")
+  answer     String @default("")
+  photo      String @default("")
+  video      String @default("") @db.Text
+  correct    String @default("")
+
+  quiz     QuizMeta                 @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question QuizPersonalityQuestion  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_personality_answers")
+}
+
+model QuizPersonalityResult {
+  id          Int    @id @default(autoincrement())
+  quizId      Int    @map("quiz_id")
+  title       String @default("")
+  description String @default("") @db.Text
+  photo       String @default("")
+
+  quiz QuizMeta @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_personality_results")
+}
+
+// ─── Trivia Quiz ────────────────────────────────────────────────────
+
+model QuizTriviaQuestion {
+  id       Int    @id @default(autoincrement())
+  quizId   Int    @map("quiz_id")
+  resultId Int    @default(0) @map("result_id")
+  question String @default("")
+  photo    String @default("")
+
+  quiz    QuizMeta             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizTriviaAnswer[]
+
+  @@map("quiz_trivia_questions")
+}
+
+model QuizTriviaAnswer {
+  id         Int    @id @default(autoincrement())
+  quizId     Int    @map("quiz_id")
+  resultId   Int    @default(0) @map("result_id")
+  questionId Int    @map("question_id")
+  answer     String @default("")
+  photo      String @default("")
+  correct    String @default("")
+
+  quiz     QuizMeta            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question QuizTriviaQuestion  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_trivia_answers")
+}
+
+// ─── Poll ───────────────────────────────────────────────────────────
+
+model PollAnswer {
+  id          Int    @id @default(autoincrement())
+  quizId      Int    @map("quiz_id")
+  title       String @default("")
+  description String @default("") @db.Text
+  photo       String @default("")
+  video       String @default("") @db.Text
+
+  quiz      QuizMeta       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  responses PollResponse[]
+
+  @@map("poll_answers")
+}
+
+model PollResponse {
+  id          Int    @id @default(autoincrement())
+  quizId      Int    @map("quiz_id")
+  answerId    Int    @map("answer_id")
+  username    String @default("")
+  description String @default("") @db.Text
+
+  quiz   QuizMeta   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answer PollAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+
+  @@map("poll_responses")
+}
+
+// ─── List ───────────────────────────────────────────────────────────
+
+model ListAnswer {
+  id          Int    @id @default(autoincrement())
+  quizId      Int    @map("quiz_id")
+  title       String @default("")
+  description String @default("") @db.Text
+  photo       String @default("")
+  video       String @default("") @db.Text
+
+  quiz QuizMeta @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("list_answers")
+}
+
+// ─── Would You Rather / VS ──────────────────────────────────────────
+
+model WouldYouRatherAnswer {
+  id          Int    @id @default(autoincrement())
+  quizId      Int    @map("quiz_id")
+  title       String @default("")
+  description String @default("") @db.Text
+  photo       String @default("")
+
+  quiz      QuizMeta                  @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  responses WouldYouRatherResponse[]
+
+  @@map("wouldyourather_answers")
+}
+
+model WouldYouRatherResponse {
+  id       Int    @id @default(autoincrement())
+  quizId   Int    @map("quiz_id")
+  answerId Int    @map("answer_id")
+  username String @default("")
+
+  quiz   QuizMeta             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answer WouldYouRatherAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+
+  @@map("wouldyourather_responses")
+}
+
+// ─── Question / Q&A ─────────────────────────────────────────────────
+
+model QuestionAnswer {
+  id           Int    @id @default(autoincrement()) @map("commentid")
+  fromUsername  String @default("") @map("fromusername")
+  contentId    Int    @map("content_id")
+  message      String @default("") @db.Text
+  timestamp    String @default("")
+  replyId      Int    @default(0) @map("replyid")
+  bestAnswer   Int    @default(0) @map("bestanswer")
+
+  @@map("question_answers")
+}
+
+// ─── Users ──────────────────────────────────────────────────────────
+
+model User {
+  id          Int    @id @default(autoincrement())
+  username    String @unique @default("")
+  password    String @default("")
+  email       String @default("")
+  fbid        String @default("")
+  photo       String @default("")
+  zip         String @default("")
+  city        String @default("")
+  state       String @default("")
+  country     String @default("")
+  timestamp   String @default("")
+  description String @default("") @db.Text
+  status      String @default("")
+  messaging   String @default("")
+  ip          String @default("")
+
+  @@map("users")
+}
+
+// ─── Categories ─────────────────────────────────────────────────────
 
 model Category {
-  id          String @id @default(cuid())
-  name        String
-  slug        String @unique
-  description String?
-  icon        String?
-  order       Int    @default(0)
+  id          Int    @id @default(autoincrement())
+  title       String @default("")
+  term        String @default("")
+  altterm     String @default("")
+  description String @default("") @db.Text
+  photo       String @default("")
+  background  String @default("")
+  banner      String @default("")
 
-  quizzes Quiz[]
+  @@map("category")
 }
 
-model Quiz {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  description String?
-  image       String?
-  categoryId  String?
-  authorId    String
-  status      String   @default("draft")
-  featured    Boolean  @default(false)
-  views       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// ─── Meta / Social ──────────────────────────────────────────────────
 
-  category  Category?    @relation(fields: [categoryId], references: [id])
-  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  questions Question[]
-  results   QuizResult[]
-  attempts  QuizAttempt[]
+model MetaComment {
+  id           Int    @id @default(autoincrement()) @map("commentid")
+  fromUsername  String @default("") @map("fromusername")
+  contentId    Int    @map("content_id")
+  message      String @default("") @db.Text
+  timestamp    String @default("")
+  replyId      Int    @default(0) @map("replyid")
+
+  quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("meta_comments")
 }
 
-model Question {
-  id     String @id @default(cuid())
-  quizId String
-  title  String
-  image  String?
-  order  Int    @default(0)
+model MetaCategory {
+  id         Int    @id @default(autoincrement())
+  contentId  Int    @map("content_id")
+  categories String @default("")
 
-  quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  options Option[]
+  quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("meta_categories")
 }
 
-model Option {
-  id         String @id @default(cuid())
-  questionId String
-  title      String
-  image      String?
-  resultKey  String?
+model MetaLove {
+  id        Int    @id @default(autoincrement())
+  contentId Int    @map("content_id")
+  love      String @default("0")
+  hate      String @default("0")
+  type      String @default("")
 
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("meta_loves")
 }
 
-model QuizResult {
-  id          String @id @default(cuid())
-  quizId      String
-  key         String
-  title       String
-  description String?
-  image       String?
+model MetaReact {
+  id        Int    @id @default(autoincrement())
+  contentId Int    @map("content_id")
+  lol       String @default("0")
+  omg       String @default("0")
+  wtf       String @default("0")
+  epic      String @default("0")
+  fail      String @default("0")
 
-  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
-  @@unique([quizId, key])
+  @@map("meta_react")
 }
 
-model QuizAttempt {
-  id          String   @id @default(cuid())
-  quizId      String
-  userId      String?
-  answers     Json
-  resultKey   String?
-  completedAt DateTime @default(now())
+model MetaTag {
+  id        Int    @id @default(autoincrement())
+  contentId Int    @map("content_id")
+  term      String @default("")
 
-  quiz Quiz  @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  user User? @relation(fields: [userId], references: [id])
+  quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("meta_tags")
+}
+
+// ─── Results & Tracking ─────────────────────────────────────────────
+
+model QuizResultsLog {
+  id        Int    @id @default(autoincrement())
+  quizId    Int    @map("quiz_id")
+  resultId  Int?   @map("result_id")
+  score     String @default("")
+  username  String @default("")
+  timestamp String @default("")
+  ip        String @default("")
+
+  quiz QuizMeta @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_results_log")
+}
+
+model UserTaken {
+  id        Int     @id @default(autoincrement())
+  contentId Int     @map("content_id")
+  username  String? @default("")
+  timestamp String  @default("")
+  ip        String  @default("")
+  type      String? @default("")
+  score     String  @default("")
+  resultId  Int?    @map("result_id")
+  answerId  Int?    @map("answer_id")
+
+  quiz QuizMeta @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("user_taken")
 }
