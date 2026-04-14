@@ -24,36 +24,28 @@ export default async function BadgesPage() {
 
   return (
     <div>
-      {/* Game hero */}
+      {/* Compact header */}
       <div className="relative overflow-hidden" style={{ background: "var(--grad-game)" }}>
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }} />
-        <div className="absolute top-10 left-[30%] w-48 h-48 rounded-full blur-[80px] opacity-20 float" style={{ background: "var(--yellow)" }} />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-18">
-          <div className="animate-rise">
-            <div className="flex items-center gap-2 text-xs font-medium mb-5" style={{ color: "rgba(255,255,255,0.3)" }}>
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <span>›</span>
-              <span style={{ color: "rgba(255,255,255,0.6)" }}>Badges</span>
-            </div>
-            <h1 className="display text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Badge <span className="text-gradient-vivid">Collection</span>
-            </h1>
-            <p className="mt-3 text-sm max-w-lg" style={{ color: "rgba(255,255,255,0.4)" }}>
-              {badges.length} badges across 5 rarity tiers. Some are easy. Some are legendary. All are ridiculous.
-            </p>
-            <div className="mt-5 max-w-xs">
-              <div className="xp-bar"><div className="xp-fill" style={{ width: "100%" }} /></div>
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span>›</span>
+            <span style={{ color: "rgba(255,255,255,0.6)" }}>Badges</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <h1 className="display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Badge Collection</h1>
+              <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.35)" }}>{badges.length} badges across 5 rarity tiers. All ridiculous.</p>
             </div>
           </div>
         </div>
-        <div className="h-6" style={{ background: "linear-gradient(to bottom, transparent, white)" }} />
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-2">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         {grouped.map(({ rarity, style, badges: rb }, gi) => (
           <section key={rarity} className={`mb-10 animate-rise d${Math.min(gi + 2, 6)}`}>
             <div className="flex items-center gap-3 mb-4">

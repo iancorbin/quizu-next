@@ -53,50 +53,37 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div>
-      {/* Game-style hero */}
+      {/* Compact header */}
       <div className="relative overflow-hidden" style={{ background: "var(--grad-game)" }}>
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }} />
-        <div className="absolute top-10 right-[25%] w-56 h-56 rounded-full blur-[90px] opacity-20 float" style={{ background: "var(--cyan)" }} />
-        <div className="absolute bottom-0 left-[15%] w-40 h-40 rounded-full blur-[70px] opacity-10" style={{ background: "var(--pink)" }} />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-medium mb-5" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>›</span>
             <Link href="/browse" className="hover:text-white transition-colors">Quizzes</Link>
             <span>›</span>
             <span style={{ color: "rgba(255,255,255,0.6)" }}>{category.title}</span>
           </div>
-
-          <div className="animate-rise max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 mb-5"
-              style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
-              <div className="w-2 h-2 rounded-full glow" style={{ background: "var(--cyan)" }} />
-              <span className="mono text-[10px] font-bold tracking-widest" style={{ color: "rgba(255,255,255,0.35)" }}>
-                {quizCount} QUIZZES
-              </span>
+          <div className="flex items-end justify-between">
+            <div>
+              <h1 className="display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                {category.title} Quizzes
+              </h1>
+              <p className="text-sm mt-1 max-w-lg" style={{ color: "rgba(255,255,255,0.35)" }}>
+                {tc?.intro || `Explore the best ${category.title.toLowerCase()} quizzes on Quizu.`}
+              </p>
             </div>
-
-            <h1 className="display text-4xl sm:text-5xl font-extrabold text-white leading-[1.05] tracking-tight">
-              {category.title} <span className="text-gradient-vivid">Quizzes</span>
-            </h1>
-            <p className="mt-4 text-sm leading-relaxed max-w-lg" style={{ color: "rgba(255,255,255,0.4)" }}>
-              {tc?.intro || `Explore the best ${category.title.toLowerCase()} quizzes on Quizu.`}
-            </p>
-
-            <div className="mt-5 max-w-xs">
-              <div className="xp-bar"><div className="xp-fill" style={{ width: `${Math.min(100, quizCount * 10)}%` }} /></div>
-            </div>
+            <span className="mono text-[10px] font-bold tracking-widest shrink-0" style={{ color: "rgba(255,255,255,0.3)" }}>
+              {quizCount} QUIZZES
+            </span>
           </div>
         </div>
-        <div className="h-6" style={{ background: "linear-gradient(to bottom, transparent, white)" }} />
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-2">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         {/* Fun facts */}
         {tc?.facts && (
           <div className="grid sm:grid-cols-3 gap-4 mb-10 animate-rise d2">
