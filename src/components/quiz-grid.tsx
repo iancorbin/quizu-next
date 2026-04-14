@@ -7,18 +7,18 @@ const typeLabels: Record<string, string> = {
   poll: "poll", list: "list", question: "q&a", vs: "wyr",
 };
 
-// Distinctive gradient palette — each one is a mood
-const gradients = [
-  "linear-gradient(135deg, #1a1a2e, #16213e)",
-  "linear-gradient(135deg, #0f3443, #34e89e33)",
-  "linear-gradient(135deg, #2d1b4e, #562c7f)",
-  "linear-gradient(135deg, #1c1c1c, #383838)",
-  "linear-gradient(135deg, #0a1628, #1a3a5c)",
-  "linear-gradient(135deg, #2a0a0a, #5c1a1a)",
-  "linear-gradient(135deg, #1a2a1a, #2a4a2a)",
-  "linear-gradient(135deg, #2a1a0a, #4a3a1a)",
-  "linear-gradient(135deg, #0a1a2a, #1a2a4a)",
-  "linear-gradient(135deg, #2a0a2a, #4a1a3a)",
+// Dark moody gradients for card headers
+const bgs = [
+  "linear-gradient(145deg, #1a1a2e, #16213e)",
+  "linear-gradient(145deg, #2d1b4e, #1a0a2e)",
+  "linear-gradient(145deg, #0f3443, #0a1e28)",
+  "linear-gradient(145deg, #2a0a0a, #1a0808)",
+  "linear-gradient(145deg, #1a2a1a, #0a1a0a)",
+  "linear-gradient(145deg, #2a1a0a, #1a100a)",
+  "linear-gradient(145deg, #0a1a2a, #081828)",
+  "linear-gradient(145deg, #1c1c1c, #2a2a2a)",
+  "linear-gradient(145deg, #1a0a2a, #2a1a3a)",
+  "linear-gradient(145deg, #0a2a1a, #1a3a2a)",
 ];
 
 interface Quiz {
@@ -27,9 +27,7 @@ interface Quiz {
 }
 
 export function QuizGrid({ quizzes, columns = 4 }: { quizzes: Quiz[]; columns?: 3 | 4 }) {
-  const cols = columns === 3
-    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-    : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+  const cols = columns === 3 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
 
   return (
     <div className={`grid ${cols} gap-4`}>
@@ -37,45 +35,39 @@ export function QuizGrid({ quizzes, columns = 4 }: { quizzes: Quiz[]; columns?: 
         const slug = quiz.url || quiz.id.toString();
         const taken = Number(quiz.taken) || 0;
         const label = typeLabels[quiz.type] || quiz.type;
-        const bg = gradients[i % gradients.length];
 
         return (
           <Link key={quiz.id} href={`/${slug}`}
-            className={`group card-hover flex flex-col rounded-xl overflow-hidden border animate-enter d${Math.min(i % 4 + 1, 6)}`}
-            style={{ borderColor: "var(--stone-100)", background: "var(--white)" }}>
+            className={`group card-lift flex flex-col rounded-xl overflow-hidden border animate-rise d${Math.min((i % 4) + 1, 6)}`}
+            style={{ borderColor: "var(--warm-100)" }}>
 
-            {/* Visual header */}
-            <div className="relative aspect-[16/9] overflow-hidden" style={{ background: bg }}>
+            <div className="relative aspect-[16/9] overflow-hidden" style={{ background: bgs[i % bgs.length] }}>
               {quiz.photo && quiz.photo !== "" ? (
                 <img src={`/uploads/${quiz.photo}`} alt={quiz.title}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
               ) : (
-                /* Abstract decoration instead of emoji */
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full border border-white/10 transition-transform duration-500 group-hover:scale-150 group-hover:rotate-45" />
-                  <div className="absolute w-8 h-8 rounded-full border border-white/5 transition-transform duration-700 group-hover:scale-[3]" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-30 transition-opacity">
+                  <div className="w-20 h-20 rounded-full border border-white/20" />
                 </div>
               )}
-              {/* Type label */}
-              <span className="absolute top-3 left-3 mono text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-black/40 backdrop-blur-sm text-white/80">
+              <span className="absolute top-3 left-3 code text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white/70">
                 {label}
               </span>
               {taken > 0 && (
-                <span className="absolute bottom-3 right-3 mono text-[9px] font-medium px-1.5 py-0.5 rounded bg-black/40 backdrop-blur-sm text-white/60">
-                  {taken >= 1000 ? `${(taken / 1000).toFixed(1)}K` : taken}
+                <span className="absolute bottom-3 right-3 code text-[9px] px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white/50">
+                  {taken >= 1000 ? `${(taken / 1000).toFixed(1)}K` : taken} played
                 </span>
               )}
             </div>
 
-            {/* Content */}
             <div className="flex flex-1 flex-col p-4">
-              <h3 className="display text-[14px] font-bold leading-snug line-clamp-2 transition-colors group-hover:text-[var(--cyan)]"
-                style={{ color: "var(--stone-900)" }}>
+              <h3 className="head text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-[var(--cyan)] transition-colors"
+                style={{ color: "var(--warm-900)" }}>
                 {quiz.title}
               </h3>
               {quiz.description && (
-                <p className="mt-1.5 text-[12px] leading-relaxed line-clamp-2" style={{ color: "var(--stone-400)" }}>
+                <p className="mt-1.5 text-[12px] leading-relaxed line-clamp-2" style={{ color: "var(--warm-400)" }}>
                   {quiz.description}
                 </p>
               )}
