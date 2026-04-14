@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  username       String   @unique
+  email          String   @unique
+  password       String?
+  name           String?
+  bio            String?
+  profilePicture String?
+  provider       String?
+  providerId     String?
+  type           String   @default("user")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  quizzes      Quiz[]
+  quizAttempts QuizAttempt[]
+}
+
+model Category {
+  id          String @id @default(cuid())
+  name        String
+  slug        String @unique
+  description String?
+  icon        String?
+  order       Int    @default(0)
+
+  quizzes Quiz[]
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  image       String?
+  categoryId  String?
+  authorId    String
+  status      String   @default("draft")
+  featured    Boolean  @default(false)
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category  Category?    @relation(fields: [categoryId], references: [id])
+  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questions Question[]
+  results   QuizResult[]
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id     String @id @default(cuid())
+  quizId String
+  title  String
+  image  String?
+  order  Int    @default(0)
+
+  quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options Option[]
+}
+
+model Option {
+  id         String @id @default(cuid())
+  questionId String
+  title      String
+  image      String?
+  resultKey  String?
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuizResult {
+  id          String @id @default(cuid())
+  quizId      String
+  key         String
+  title       String
+  description String?
+  image       String?
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@unique([quizId, key])
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  quizId      String
+  userId      String?
+  answers     Json
+  resultKey   String?
+  completedAt DateTime @default(now())
+
+  quiz Quiz  @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id])
+}
