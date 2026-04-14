@@ -2,24 +2,24 @@
 
 import Link from "next/link";
 
-const typeColors: Record<string, string> = {
-  personality: "bg-purple-100 text-purple-700",
-  personalityalt: "bg-purple-100 text-purple-700",
-  trivia: "bg-blue-100 text-blue-700",
-  poll: "bg-green-100 text-green-700",
-  list: "bg-yellow-100 text-yellow-700",
-  question: "bg-orange-100 text-orange-700",
-  vs: "bg-pink-100 text-pink-700",
-};
-
 const typeLabels: Record<string, string> = {
   personality: "Personality",
   personalityalt: "Personality",
   trivia: "Trivia",
   poll: "Poll",
   list: "List",
-  question: "Question",
-  vs: "Would You Rather",
+  question: "Q&A",
+  vs: "vs",
+};
+
+const typeEmoji: Record<string, string> = {
+  personality: "✨",
+  personalityalt: "✨",
+  trivia: "🧠",
+  poll: "📊",
+  list: "📝",
+  question: "❓",
+  vs: "⚡",
 };
 
 interface QuizCardProps {
@@ -35,54 +35,82 @@ interface QuizCardProps {
     category: string;
     username: string;
   };
+  rank?: number;
 }
 
-export function QuizCard({ quiz }: QuizCardProps) {
+export function QuizCard({ quiz, rank }: QuizCardProps) {
   const slug = quiz.url || quiz.id.toString();
-  const typeColor = typeColors[quiz.type] || "bg-gray-100 text-gray-700";
   const typeLabel = typeLabels[quiz.type] || quiz.type;
+  const emoji = typeEmoji[quiz.type] || "📋";
+  const badgeClass = `badge-${quiz.type}`;
+  const takenNum = Number(quiz.taken) || 0;
+  const viewsNum = Number(quiz.views) || 0;
 
   return (
-    <Link
-      href={`/quiz/${slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
-    >
-      <div className="aspect-video bg-gradient-to-br from-indigo-100 to-purple-100 relative">
-        {quiz.photo && quiz.photo !== "" && (
+    <Link href={`/quiz/${slug}`} className="quiz-card group relative flex flex-col overflow-hidden rounded-2xl border bg-white" style={{ borderColor: "var(--gray-100)" }}>
+      {/* Rank badge */}
+      {rank && (
+        <div className="absolute top-3 left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg"
+          style={{ background: rank <= 3 ? "var(--neon-gradient)" : "var(--gray-700)" }}>
+          {rank}
+        </div>
+      )}
+
+      {/* Image area */}
+      <div className="relative aspect-[16/10] overflow-hidden" style={{ background: "var(--neon-gradient-subtle)" }}>
+        {quiz.photo && quiz.photo !== "" ? (
           <img
             src={`/uploads/${quiz.photo}`}
             alt={quiz.title}
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
           />
+        ) : (
+          <div className="flex h-full items-center justify-center text-4xl opacity-40">
+            {emoji}
+          </div>
         )}
-        <span
-          className={`absolute top-2 left-2 rounded-full px-2 py-0.5 text-xs font-semibold ${typeColor}`}
-        >
+
+        {/* Type badge — floating */}
+        <span className={`absolute top-3 right-3 ${badgeClass} rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase`}>
           {typeLabel}
         </span>
       </div>
+
+      {/* Content */}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2">
+        <h3 className="font-semibold leading-snug line-clamp-2 transition-colors group-hover:text-[var(--neon-blue)]"
+          style={{ fontFamily: "var(--font-display)", color: "var(--gray-900)", fontSize: "0.95rem" }}>
           {quiz.title}
         </h3>
         {quiz.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-gray-500">
+          <p className="mt-1.5 text-xs leading-relaxed line-clamp-2" style={{ color: "var(--gray-400)" }}>
             {quiz.description}
           </p>
         )}
-        <div className="mt-auto flex items-center gap-3 pt-3 text-xs text-gray-400">
-          {quiz.taken && quiz.taken !== "0" && quiz.taken !== "" && (
-            <span>{Number(quiz.taken).toLocaleString()} taken</span>
+
+        {/* Stats bar */}
+        <div className="mt-auto flex items-center gap-3 pt-3 text-xs font-medium" style={{ color: "var(--gray-400)" }}>
+          {takenNum > 0 && (
+            <span className="flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              {takenNum.toLocaleString()}
+            </span>
           )}
-          {quiz.views && quiz.views !== "0" && quiz.views !== "" && (
-            <span>{Number(quiz.views).toLocaleString()} views</span>
+          {viewsNum > 0 && (
+            <span className="flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              {viewsNum.toLocaleString()}
+            </span>
           )}
-          {quiz.category && <span className="capitalize">{quiz.category}</span>}
+          {quiz.category && (
+            <span className="ml-auto capitalize truncate max-w-[80px]">{quiz.category}</span>
+          )}
         </div>
       </div>
+
+      {/* Bottom neon accent line on hover */}
+      <div className="h-0.5 w-0 group-hover:w-full transition-all duration-300" style={{ background: "var(--neon-gradient)" }} />
     </Link>
   );
 }

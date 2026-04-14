@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface Props {
   quizId: number;
@@ -9,12 +8,7 @@ interface Props {
     id: number;
     question: string;
     photo: string;
-    answers: {
-      id: number;
-      answer: string;
-      correct: string;
-      photo: string;
-    }[];
+    answers: { id: number; answer: string; correct: string; photo: string }[];
   }[];
 }
 
@@ -25,7 +19,12 @@ export function TriviaPlayer({ quizId, questions }: Props) {
   const [finished, setFinished] = useState(false);
 
   if (questions.length === 0) {
-    return <p className="text-center text-gray-500">No questions available.</p>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-4xl mb-3">🧠</p>
+        <p style={{ color: "var(--gray-500)", fontFamily: "var(--font-display)" }}>No questions available.</p>
+      </div>
+    );
   }
 
   const q = questions[current];
@@ -35,7 +34,6 @@ export function TriviaPlayer({ quizId, questions }: Props) {
     if (selected !== null) return;
     setSelected(answerId);
     if (isCorrect) setScore((s) => s + 1);
-
     setTimeout(() => {
       if (current === questions.length - 1) {
         setFinished(true);
@@ -43,29 +41,28 @@ export function TriviaPlayer({ quizId, questions }: Props) {
         setCurrent((i) => i + 1);
         setSelected(null);
       }
-    }, 1000);
+    }, 1200);
   }
 
   function restart() {
-    setCurrent(0);
-    setScore(0);
-    setSelected(null);
-    setFinished(false);
+    setCurrent(0); setScore(0); setSelected(null); setFinished(false);
   }
 
   if (finished) {
     const pct = Math.round((score / questions.length) * 100);
     return (
       <div className="text-center">
-        <h2 className="text-lg font-semibold text-gray-500">Your Score</h2>
-        <div className="mt-4 text-6xl font-bold text-indigo-600">
+        <div className="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider mb-4"
+          style={{ background: "var(--neon-blue-soft)", color: "var(--neon-blue)" }}>
+          Final Score
+        </div>
+        <div className="text-7xl font-black neon-text-gradient" style={{ fontFamily: "var(--font-display)" }}>
           {score}/{questions.length}
         </div>
-        <p className="mt-2 text-gray-500">{pct}% correct</p>
-        <button
-          onClick={restart}
-          className="mt-6 rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500"
-        >
+        <p className="mt-2 text-lg" style={{ color: "var(--gray-500)" }}>{pct}% correct</p>
+        <button onClick={restart}
+          className="mt-8 rounded-full px-6 py-2.5 text-sm font-bold text-white hover:opacity-90"
+          style={{ background: "var(--neon-gradient)" }}>
           Try Again
         </button>
       </div>
@@ -74,45 +71,41 @@ export function TriviaPlayer({ quizId, questions }: Props) {
 
   return (
     <div>
-      <div className="mb-6 h-2 overflow-hidden rounded-full bg-gray-200">
-        <div
-          className="h-full rounded-full bg-blue-600 transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
+      <div className="mb-1 flex items-center justify-between text-xs font-medium" style={{ color: "var(--gray-400)" }}>
+        <span>Question {current + 1} of {questions.length}</span>
+        <span className="font-bold" style={{ color: "var(--neon-blue)" }}>Score: {score}</span>
       </div>
-      <p className="mb-1 text-sm text-gray-500">
-        Question {current + 1} of {questions.length} — Score: {score}
-      </p>
-      <h2 className="text-xl font-bold text-gray-900">{q.question}</h2>
-      {q.photo && (
-        <img
-          src={`/uploads/${q.photo}`}
-          alt=""
-          className="mt-3 max-h-48 rounded-xl"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
-      )}
+      <div className="mb-8 h-2 overflow-hidden rounded-full" style={{ background: "var(--gray-100)" }}>
+        <div className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${progress}%`, background: "var(--neon-blue)", boxShadow: "0 0 12px rgba(0,212,255,0.3)" }} />
+      </div>
+
+      <h2 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--gray-900)" }}>
+        {q.question}
+      </h2>
+      {q.photo && <img src={`/uploads/${q.photo}`} alt="" className="mt-4 max-h-48 rounded-xl" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />}
+
       <div className="mt-6 grid gap-3">
         {q.answers.map((a) => {
           const isCorrect = a.correct === "A" || a.correct === "1";
           const isSelected = selected === a.id;
+          const showResult = selected !== null;
+          let borderColor = "var(--gray-200)";
+          let bg = "var(--white)";
+          if (showResult && isSelected && isCorrect) { borderColor = "#059669"; bg = "#E8FFF0"; }
+          if (showResult && isSelected && !isCorrect) { borderColor = "#DC2626"; bg = "#FFF0F0"; }
+          if (showResult && !isSelected && isCorrect) { borderColor = "#059669"; bg = "#E8FFF0"; }
+
           return (
-            <button
-              key={a.id}
-              onClick={() => selectAnswer(a.id, isCorrect)}
-              disabled={selected !== null}
-              className={cn(
-                "rounded-xl border-2 px-4 py-3 text-left text-sm font-medium transition",
-                selected === null && "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50",
-                isSelected && isCorrect && "border-green-500 bg-green-50 text-green-700",
-                isSelected && !isCorrect && "border-red-500 bg-red-50 text-red-700",
-                selected !== null && !isSelected && isCorrect && "border-green-300 bg-green-50/50",
-                selected !== null && !isSelected && !isCorrect && "opacity-50"
-              )}
-            >
-              {a.answer}
+            <button key={a.id} onClick={() => selectAnswer(a.id, isCorrect)} disabled={selected !== null}
+              className="answer-option rounded-2xl border-2 px-5 py-4 text-left text-sm font-medium transition-all"
+              style={{ borderColor, background: bg, color: "var(--gray-800)", opacity: showResult && !isSelected && !isCorrect ? 0.4 : 1 }}>
+              <span className="flex items-center justify-between">
+                {a.answer}
+                {showResult && isSelected && isCorrect && <span className="text-green-600 font-bold">✓</span>}
+                {showResult && isSelected && !isCorrect && <span className="text-red-600 font-bold">✗</span>}
+                {showResult && !isSelected && isCorrect && <span className="text-green-600 text-xs">Correct</span>}
+              </span>
             </button>
           );
         })}

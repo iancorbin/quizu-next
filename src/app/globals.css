@@ -1,26 +1,162 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette — Neon Nostalgia */
+  --neon-blue: #00D4FF;
+  --neon-pink: #FF3CAC;
+  --neon-blue-soft: #E0F7FF;
+  --neon-pink-soft: #FFF0F7;
+  --neon-blue-glow: rgba(0, 212, 255, 0.15);
+  --neon-pink-glow: rgba(255, 60, 172, 0.15);
+  --neon-gradient: linear-gradient(135deg, #00D4FF, #FF3CAC);
+  --neon-gradient-subtle: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(255,60,172,0.08));
+
+  /* Neutrals */
+  --white: #FFFFFF;
+  --off-white: #FAFBFC;
+  --gray-50: #F5F6F8;
+  --gray-100: #ECEEF1;
+  --gray-200: #D8DCE2;
+  --gray-300: #B0B8C4;
+  --gray-400: #8892A0;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
+  --black: #0A0B0D;
+
+  /* Typography */
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--white);
+  --color-foreground: var(--gray-900);
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-pink: var(--neon-pink);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--white);
+  color: var(--gray-800);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Neon glow utility classes ──────────────────────── */
+
+.neon-text-blue {
+  background: linear-gradient(135deg, #00D4FF, #0099CC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neon-text-pink {
+  background: linear-gradient(135deg, #FF3CAC, #CC2288);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neon-text-gradient {
+  background: var(--neon-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neon-border-blue {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.1), 0 0 20px rgba(0, 212, 255, 0.06);
+}
+
+.neon-border-pink {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 0 1px rgba(255, 60, 172, 0.1), 0 0 20px rgba(255, 60, 172, 0.06);
+}
+
+/* ─── Quiz card hover glow ───────────────────────────── */
+
+.quiz-card {
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.quiz-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 30px rgba(0, 212, 255, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Neon pill badges ───────────────────────────────── */
+
+.badge-personality { background: var(--neon-pink-soft); color: #CC2288; }
+.badge-personalityalt { background: var(--neon-pink-soft); color: #CC2288; }
+.badge-trivia { background: var(--neon-blue-soft); color: #0088AA; }
+.badge-poll { background: #E8FFF0; color: #059669; }
+.badge-list { background: #FFF8E0; color: #B45309; }
+.badge-question { background: #FFF0E0; color: #C2410C; }
+.badge-vs { background: linear-gradient(135deg, var(--neon-blue-soft), var(--neon-pink-soft)); color: #7C3AED; }
+
+/* ─── Progress bar neon ──────────────────────────────── */
+
+.progress-neon {
+  background: var(--neon-gradient);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+}
+
+/* ─── Table row hover ────────────────────────────────── */
+
+.quiz-table-row {
+  transition: background 0.15s ease;
+}
+.quiz-table-row:hover {
+  background: var(--neon-gradient-subtle);
+}
+
+/* ─── Smooth scrollbar ───────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-50); }
+::-webkit-scrollbar-thumb {
+  background: var(--gray-200);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gray-300); }
+
+/* ─── Selection color ────────────────────────────────── */
+
+::selection {
+  background: rgba(0, 212, 255, 0.2);
+  color: var(--gray-900);
+}
+
+/* ─── Answer option interaction ──────────────────────── */
+
+.answer-option {
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+.answer-option:hover {
+  border-color: var(--neon-blue);
+  background: var(--neon-blue-soft);
+  transform: translateX(4px);
+}
+.answer-option:active {
+  transform: translateX(2px) scale(0.99);
+}
+.answer-option.selected {
+  border-color: var(--neon-pink);
+  background: var(--neon-pink-soft);
+  box-shadow: 0 0 0 2px rgba(255, 60, 172, 0.15);
 }

@@ -1,30 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface Props {
   quizId: number;
-  answers: {
-    id: number;
-    title: string;
-    description: string;
-    photo: string;
-    _count: { responses: number };
-  }[];
+  answers: { id: number; title: string; description: string; photo: string; _count: { responses: number } }[];
 }
 
 export function PollPlayer({ quizId, answers }: Props) {
   const [voted, setVoted] = useState<number | null>(null);
   const totalVotes = answers.reduce((s, a) => s + a._count.responses, 0);
 
-  function vote(answerId: number) {
-    if (voted !== null) return;
-    setVoted(answerId);
-  }
-
   if (answers.length === 0) {
-    return <p className="text-center text-gray-500">No poll options.</p>;
+    return <div className="text-center py-12"><p className="text-4xl mb-3">📊</p><p style={{ color: "var(--gray-500)" }}>No options available.</p></div>;
   }
 
   return (
@@ -35,27 +23,23 @@ export function PollPlayer({ quizId, answers }: Props) {
         const pct = total > 0 ? Math.round((votes / total) * 100) : 0;
 
         return (
-          <button
-            key={a.id}
-            onClick={() => vote(a.id)}
-            disabled={voted !== null}
-            className={cn(
-              "relative w-full overflow-hidden rounded-xl border-2 px-4 py-3 text-left transition",
-              voted === null && "border-gray-200 hover:border-green-300",
-              voted === a.id && "border-green-500",
-              voted !== null && voted !== a.id && "border-gray-200 opacity-80"
-            )}
-          >
+          <button key={a.id} onClick={() => voted === null && setVoted(a.id)} disabled={voted !== null}
+            className="relative w-full overflow-hidden rounded-2xl border-2 px-5 py-4 text-left transition-all"
+            style={{
+              borderColor: voted === a.id ? "var(--neon-blue)" : "var(--gray-200)",
+              background: "var(--white)",
+              boxShadow: voted === a.id ? "0 0 0 3px rgba(0,212,255,0.1)" : "none",
+            }}>
             {voted !== null && (
-              <div
-                className="absolute inset-0 bg-green-50"
-                style={{ width: `${pct}%` }}
-              />
+              <div className="absolute inset-0 rounded-2xl transition-all duration-500"
+                style={{ width: `${pct}%`, background: voted === a.id ? "var(--neon-blue-soft)" : "var(--gray-50)" }} />
             )}
             <div className="relative flex items-center justify-between">
-              <span className="font-medium text-gray-900">{a.title}</span>
+              <span className="font-semibold text-sm" style={{ color: "var(--gray-800)", fontFamily: "var(--font-display)" }}>
+                {a.title}
+              </span>
               {voted !== null && (
-                <span className="text-sm font-semibold text-green-700">
+                <span className="text-sm font-bold tabular-nums" style={{ color: voted === a.id ? "var(--neon-blue)" : "var(--gray-400)" }}>
                   {pct}%
                 </span>
               )}
@@ -64,8 +48,8 @@ export function PollPlayer({ quizId, answers }: Props) {
         );
       })}
       {voted !== null && (
-        <p className="text-center text-sm text-gray-400">
-          {totalVotes + 1} total votes
+        <p className="text-center text-xs font-medium pt-2" style={{ color: "var(--gray-400)" }}>
+          {(totalVotes + 1).toLocaleString()} total votes
         </p>
       )}
     </div>
