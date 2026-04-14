@@ -7,7 +7,7 @@ const typeLabels: Record<string, string> = {
   poll: "poll", list: "list", question: "q&a", vs: "wyr",
 };
 
-// Dark moody gradients for card headers
+// Dark cinematic gradients
 const bgs = [
   "linear-gradient(145deg, #1a1a2e, #16213e)",
   "linear-gradient(145deg, #2d1b4e, #1a0a2e)",
@@ -38,36 +38,43 @@ export function QuizGrid({ quizzes, columns = 4 }: { quizzes: Quiz[]; columns?: 
 
         return (
           <Link key={quiz.id} href={`/${slug}`}
-            className={`group card-lift flex flex-col rounded-xl overflow-hidden border animate-rise d${Math.min((i % 4) + 1, 6)}`}
-            style={{ borderColor: "var(--warm-100)" }}>
-
-            <div className="relative aspect-[16/9] overflow-hidden" style={{ background: bgs[i % bgs.length] }}>
+            className={`group game-card flex flex-col animate-rise d${Math.min((i % 4) + 1, 6)}`}>
+            {/* Thumbnail */}
+            <div className="relative aspect-[16/9] overflow-hidden rounded-t-[16px]" style={{ background: bgs[i % bgs.length] }}>
               {quiz.photo && quiz.photo !== "" ? (
                 <img src={`/uploads/${quiz.photo}`} alt={quiz.title}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-30 transition-opacity">
-                  <div className="w-20 h-20 rounded-full border border-white/20" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full border border-white/10 group-hover:scale-150 group-hover:border-[var(--cyan)]/30 transition-all duration-700" />
                 </div>
               )}
-              <span className="absolute top-3 left-3 code text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white/70">
+              {/* Type badge */}
+              <span className="absolute top-3 left-3 mono text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-sm text-white/70">
                 {label}
               </span>
+              {/* Play button on hover */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="play-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+              </div>
+              {/* Taken count */}
               {taken > 0 && (
-                <span className="absolute bottom-3 right-3 code text-[9px] px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white/50">
-                  {taken >= 1000 ? `${(taken / 1000).toFixed(1)}K` : taken} played
+                <span className="absolute bottom-3 right-3 mono text-[9px] px-1.5 py-0.5 rounded-md bg-black/50 backdrop-blur-sm text-white/50">
+                  {taken >= 1000 ? `${(taken / 1000).toFixed(1)}K` : taken}
                 </span>
               )}
             </div>
-
+            {/* Content */}
             <div className="flex flex-1 flex-col p-4">
-              <h3 className="head text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-[var(--cyan)] transition-colors"
-                style={{ color: "var(--warm-900)" }}>
+              <h3 className="display text-[14px] font-bold leading-snug line-clamp-2 group-hover:text-[var(--cyan)] transition-colors"
+                style={{ color: "var(--gray-900)" }}>
                 {quiz.title}
               </h3>
               {quiz.description && (
-                <p className="mt-1.5 text-[12px] leading-relaxed line-clamp-2" style={{ color: "var(--warm-400)" }}>
+                <p className="mt-1.5 text-[12px] leading-relaxed line-clamp-2" style={{ color: "var(--gray-400)" }}>
                   {quiz.description}
                 </p>
               )}
